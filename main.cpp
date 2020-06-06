@@ -1,6 +1,10 @@
 #include <iostream>
+#include "Map.h"
 
 int main() {
-    std::cout << "Hello, World!" << std::endl;
+
+    Map map = Map("../Files", 1);
+    map.listFilesFromPath();
+    map.startParallelWorkers();
     return 0;
 }
