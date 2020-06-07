@@ -93,16 +93,20 @@ void Map::readWorker(long startRange, long endRange)
                     pointer = new std::pair<std::string, int>();
                     pointer->second = 1;
                     pointer->first = word;
-                    emptySemaphore.wait();
-                    shufflerPtr->addToBuffer(pointer);
-                    fullSemaphore.notify();
-
+                    processInput(pointer);
                 }
 
             }while (ss);
         }
         file.close();
     }
+}
+
+
+void Map::processInput(std::pair<std::string, int> *ptr) {
+    emptySemaphore.wait();
+    shufflerPtr->addToBuffer(ptr);
+    fullSemaphore.notify();
 }
 
 void Map::waitForWorkers(short shuffleWorkers){

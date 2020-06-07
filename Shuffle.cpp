@@ -78,8 +78,9 @@ void Shuffle::shuffleWorker() {
         }
         else
         {
-            std::cout << elem->first << std::endl;
-            //TODO: Aqui o Ocimar deve colocar uma função para trata as coisas do Ocimar
+            //Since there are no locks for the prints, they are out of order
+            //std::cout << elem->first << " " << std::this_thread::get_id() << std::endl;
+            //TODO: Aqui o Ocimar deve colocar uma função para tratar as coisas do Ocimar
         }
     }
 
