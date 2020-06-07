@@ -22,11 +22,6 @@ void Semaphore::wait() {
     --count;
 }
 
-void Semaphore::waitForZero() {
-    std::unique_lock<decltype(mutex)> lock(mutex);
-    while(count > 0)
-        condition.wait(lock);
-}
 
 bool Semaphore::tryWait() {
     std::lock_guard<decltype(mutex)> lock(mutex);

@@ -8,7 +8,7 @@
 
 using namespace boost::filesystem;
 
-Map::Map(std::string path, short workers, Semaphore * full, Semaphore * empty)
+Map::Map(std::string path, short workers, Semaphore & full, Semaphore & empty)
 : fullSemaphore(full), emptySemaphore(empty)
 {
     pathName = path;
@@ -93,9 +93,9 @@ void Map::readWorker(long startRange, long endRange)
                     pointer = new std::pair<std::string, int>();
                     pointer->second = 1;
                     pointer->first = word;
-                    emptySemaphore->wait();
+                    emptySemaphore.wait();
                     shufflerPtr->addToBuffer(pointer);
-                    fullSemaphore->notify();
+                    fullSemaphore.notify();
 
                 }
 
@@ -117,9 +117,9 @@ void Map::waitForWorkers(short shuffleWorkers){
         pointer = new std::pair<std::string, int>();
         pointer->first = "";
         pointer->second = 2;
-        emptySemaphore->wait();
+        emptySemaphore.wait();
         shufflerPtr->addToBuffer(pointer);
-        fullSemaphore->notify();
+        fullSemaphore.notify();
     }
 
 }

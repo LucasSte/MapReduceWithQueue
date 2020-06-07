@@ -6,13 +6,10 @@
 int main() {
     Semaphore empty(2);
     Semaphore full(0);
-    Semaphore finishedSem(0);
 
-
-    bool finished = false;
-    std::shared_ptr<Shuffle> shuffle( new Shuffle(1, 3, &full, &empty, &finished, &finishedSem));
+    std::shared_ptr<Shuffle> shuffle( new Shuffle(1, 3, full, empty));
     //The number of files should not be greater than the number of workers
-    Map map("../Files", 2, &full, &empty);
+    Map map("../Files", 2, full, empty);
 
     map.setShuffler(shuffle);
     map.listFilesFromPath();

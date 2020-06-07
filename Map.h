@@ -19,13 +19,13 @@ private:
     short workersNumber;
     std::vector<std::string> files;
     void readWorker(long startRange, long endRange);
-    Semaphore * fullSemaphore;
-    Semaphore * emptySemaphore;
+    Semaphore & fullSemaphore;
+    Semaphore & emptySemaphore;
     std::vector<std::thread> workers;
     std::shared_ptr<Shuffle> shufflerPtr;
 
 public:
-    Map(std::string path, short workers, Semaphore * full, Semaphore *empty);
+    Map(std::string path, short workers, Semaphore & full, Semaphore & empty);
     void listFilesFromPath();
     void startParallelWorkers();
     void waitForWorkers(short shuffleWorkers);

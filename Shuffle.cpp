@@ -5,8 +5,8 @@
 #include <iostream>
 #include "Shuffle.h"
 
-Shuffle::Shuffle(int max, short workersNum, Semaphore * full, Semaphore * empty, bool * finished, Semaphore * finishedSem)
-: finished(finished), fullSemaphore(full), emptySemaphore(empty), finishedSemaphore(finishedSem)
+Shuffle::Shuffle(int max, short workersNum, Semaphore & full, Semaphore & empty)
+: fullSemaphore(full), emptySemaphore(empty)
 {
     maxsize = max;
     size = 0;
@@ -61,9 +61,9 @@ void Shuffle::shuffleWorker() {
     int num = 1;
     while(num & 1)
     {
-        fullSemaphore->wait();
+        fullSemaphore.wait();
         elem = removeFromBuffer();
-        emptySemaphore->notify();
+        emptySemaphore.notify();
         num = elem->second;
         if(num & 2)
         {
