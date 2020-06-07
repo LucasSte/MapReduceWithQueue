@@ -16,20 +16,27 @@ Shuffle::Shuffle(int max, short workersNum, Semaphore & full, Semaphore & empty)
 void Shuffle::addToBuffer(std::pair<std::string, int> *item) {
 
     criticalRegion.lock();
+    addToQueue(item);
+    criticalRegion.unlock();
+
+}
+
+constexpr inline void Shuffle::addToQueue(std::pair<std::string, int> *item) {
     if(size <= maxsize)
     {
         buffer.push(item);
         size++;
     }
-    criticalRegion.unlock();
-
 }
 
 std::pair<std::string, int> * Shuffle::removeFromBuffer() {
-    criticalRegion.lock();
+    std::lock_guard<std::mutex> lock(criticalRegion);
+    return removeFromQueue();
+}
+
+constexpr inline std::pair<std::string, int> * Shuffle::removeFromQueue() {
     if(size == 0)
     {
-        criticalRegion.unlock();
         return nullptr;
     }
     else
@@ -37,7 +44,6 @@ std::pair<std::string, int> * Shuffle::removeFromBuffer() {
         size --;
         std::pair<std::string, int> * elem = buffer.front();
         buffer.pop();
-        criticalRegion.unlock();
         return elem;
     }
 }
@@ -73,6 +79,7 @@ void Shuffle::shuffleWorker() {
         else
         {
             std::cout << elem->first << std::endl;
+            //TODO: Aqui o Ocimar deve colocar uma função para trata as coisas do Ocimar
         }
     }
 

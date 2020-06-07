@@ -3,23 +3,27 @@
 #include "Semaphore/Semaphore.h"
 #include "Shuffle.h"
 
+#define BUFFER_SIZE 2
+#define SHUFLLE_WORKERS 2
+#define MAP_WORKERS 2
+
 int main() {
     Semaphore empty(2);
     Semaphore full(0);
 
-    std::shared_ptr<Shuffle> shuffle( new Shuffle(1, 3, full, empty));
+    std::shared_ptr<Shuffle> shuffle( new Shuffle(BUFFER_SIZE, SHUFLLE_WORKERS, full, empty));
     //The number of files should not be greater than the number of workers
-    Map map("../Files", 2, full, empty);
+    Map map("../Files", MAP_WORKERS, full, empty);
 
     map.setShuffler(shuffle);
     map.listFilesFromPath();
     map.startParallelWorkers();
     shuffle->startWorkers();
 
-    map.waitForWorkers(3);
-    std::cout << "Passei" << std::endl;
+    map.waitForWorkers(SHUFLLE_WORKERS);
+
     shuffle->waitForWorkers();
 
-    std::cout << "Terminei" << std::endl;
+
     return 0;
 }

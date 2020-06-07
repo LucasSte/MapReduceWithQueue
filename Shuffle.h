@@ -28,6 +28,8 @@ private:
     Semaphore & emptySemaphore;
     std::vector<std::thread> workers;
     std::mutex criticalRegion;
+    constexpr inline void addToQueue(std::pair<std::string, int> * item);
+    constexpr inline std::pair<std::string, int> * removeFromQueue();
 };
 
 #endif //MAPREDUCEWITHQUEUE_SHUFFLE_H
