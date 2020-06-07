@@ -4,6 +4,10 @@
 
 #include "Semaphore.h"
 
+Semaphore::Semaphore(unsigned long initial) {
+    this->count = initial;
+}
+
 void Semaphore::notify() {
     std::lock_guard<decltype(mutex)> lock(mutex);
     ++count;

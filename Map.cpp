@@ -6,12 +6,13 @@
 #include <fstream>
 #include <sstream>
 
-
 using namespace boost::filesystem;
 
-Map::Map(string path, short workers) {
+Map::Map(std::string path, short workers, const Semaphore & full, const Semaphore & empty) {
     pathName = path;
-    this->workers = workers;
+    this->workersNumber = workers;
+    fullSemaphore = std::make_shared<Semaphore>(full);
+    emptySemaphore = std::make_shared<Semaphore>(empty);
 }
 
 void Map::listFilesFromPath() {
@@ -26,31 +27,45 @@ void Map::listFilesFromPath() {
     }
 }
 
-void Map::startParallelWorkers()
+void Map::startParallelWorkers(Shuffle & shuffler)
 {
     long numberOfFiles = files.size();
-    long filesPerWorker = numberOfFiles / workers;
-    long lastWorkerSurplus = filesPerWorker % workers;
+    long filesPerWorker = numberOfFiles / workersNumber;
+    long lastWorkerSurplus = filesPerWorker % workersNumber;
 
-    readWorker(0, numberOfFiles-1);
+    long startRange = 0;
+    long endRange = filesPerWorker-1;
+    void (Map::*func)(long, long, Shuffle &);
+    func = &Map::readWorker;
+    for(int i=1; i< workersNumber; i++)
+    {
+        std::thread th(func, startRange, endRange, shuffler);
+        workers.push_back(std::move(th));
+        startRange += filesPerWorker;
+        endRange += filesPerWorker;
+    }
+
+    endRange += lastWorkerSurplus;
+    std::thread th(func, startRange, endRange, shuffler);
+    workers.push_back(std::move(th));
+
 }
 
 
-void Map::readWorker(long startRange, long endRange)
+void Map::readWorker(long startRange, long endRange, Shuffle & shuffler)
 {
-    pair<string, int> * pointer;
+    std::pair<std::string, int> * pointer;
     std::ifstream file;
-    string line;
-    string word;
+    std::string line;
+    std::string word;
 
     unsigned long size;
     for(long i= startRange; i<=endRange; i++)
     {
-        cout << i << endl;
         file.open(pathName + "/" + files[i]);
         while(getline(file, line))
         {
-            istringstream ss(line);
+            std::istringstream ss(line);
             do
             {
                 word = "";
@@ -64,17 +79,26 @@ void Map::readWorker(long startRange, long endRange)
                         word = word.substr(0, size-1);
                     }
 
-                    pointer = new pair<string, int>();
+                    pointer = new std::pair<std::string, int>();
                     pointer->second = 1;
                     pointer->first = word;
-
-                    std::cout << pointer->first << endl;
-                    delete pointer;
+                    emptySemaphore->wait();
+                    //criticalRegion.lock();
+                    shuffler.addToBuffer(pointer);
+                    //criticalRegion.unlock();
+                    emptySemaphore->notify();
 
                 }
 
             }while (ss);
         }
         file.close();
+    }
+}
+
+void Map::waitForWorkers() {
+    for(short i=0; i<workersNumber; i++)
+    {
+        workers[i].join();
     }
 }

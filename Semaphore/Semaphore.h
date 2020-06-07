@@ -16,6 +16,7 @@ private:
     unsigned long count = 0;
 
 public:
+    explicit Semaphore(unsigned long initial);
     void notify();
     void wait();
     bool tryWait();
