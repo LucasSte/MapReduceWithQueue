@@ -20,6 +20,7 @@ public:
     void notify();
     void wait();
     bool tryWait();
+    void waitForZero();
 };
 
 #endif //MAPREDUCEWITHQUEUE_SEMAPHORE_H

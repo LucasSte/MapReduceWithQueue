@@ -13,7 +13,7 @@
 class Shuffle
 {
 public:
-    explicit Shuffle(int max, short workersNum, std::shared_ptr<Semaphore> full, std::shared_ptr<Semaphore> empty);
+    explicit Shuffle(int max, short workersNum, Semaphore * full, Semaphore * empty, bool * finished, Semaphore * finishedSem);
     void addToBuffer(std::pair<std::string, int> * item);
     std::pair<std::string, int>* removeFromBuffer();
     void startWorkers(int totalAttempts);
@@ -23,9 +23,11 @@ private:
     int size;
     int maxsize;
     short workersNum;
+    const bool * finished;
     void shuffleWorker(int trials);
-    std::shared_ptr<Semaphore> fullSemaphore;
-    std::shared_ptr<Semaphore> emptySemaphore;
+    Semaphore * fullSemaphore;
+    Semaphore * emptySemaphore;
+    Semaphore * finishedSemaphore;
     std::vector<std::thread> workers;
     std::mutex criticalRegion;
 };

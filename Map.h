@@ -19,17 +19,17 @@ private:
     short workersNumber;
     std::vector<std::string> files;
     void readWorker(long startRange, long endRange);
-    std::shared_ptr<Semaphore> fullSemaphore;
-    std::shared_ptr<Semaphore> emptySemaphore;
+    Semaphore * fullSemaphore;
+    Semaphore * emptySemaphore;
     //std::mutex criticalRegion;
     std::vector<std::thread> workers;
     std::shared_ptr<Shuffle> shufflerPtr;
 
 public:
-    Map(std::string path, short workers, std::shared_ptr<Semaphore> full, std::shared_ptr<Semaphore>empty);
+    Map(std::string path, short workers, Semaphore * full, Semaphore *empty);
     void listFilesFromPath();
     void startParallelWorkers();
-    void waitForWorkers(bool & finished);
+    void waitForWorkers(bool & finished, Semaphore * finishedSemaphore);
     void setShuffler(std::shared_ptr<Shuffle> ptr);
 };
 

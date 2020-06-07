@@ -8,11 +8,11 @@
 
 using namespace boost::filesystem;
 
-Map::Map(std::string path, short workers, std::shared_ptr<Semaphore> full, std::shared_ptr<Semaphore> empty) {
+Map::Map(std::string path, short workers, Semaphore * full, Semaphore * empty)
+: fullSemaphore(full), emptySemaphore(empty)
+{
     pathName = path;
     this->workersNumber = workers;
-    fullSemaphore = std::move(full);
-    emptySemaphore = std::move(empty);
 }
 
 void Map::listFilesFromPath() {
@@ -101,11 +101,12 @@ void Map::readWorker(long startRange, long endRange)
     }
 }
 
-void Map::waitForWorkers(bool & finished) {
+void Map::waitForWorkers(bool & finished, Semaphore * finishedSemaphore) {
     for(short i=0; i<workersNumber; i++)
     {
         workers[i].join();
     }
 
+    finishedSemaphore->notify();
     finished = true;
 }
