@@ -13,7 +13,7 @@ class Semaphore
 private:
     std::mutex mutex;
     std::condition_variable condition;
-    unsigned long count = 0;
+    unsigned long count;
 
 public:
     explicit Semaphore(unsigned long initial);

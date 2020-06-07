@@ -8,11 +8,11 @@
 
 using namespace boost::filesystem;
 
-Map::Map(std::string path, short workers, const Semaphore & full, const Semaphore & empty) {
+Map::Map(std::string path, short workers, std::shared_ptr<Semaphore> full, std::shared_ptr<Semaphore> empty) {
     pathName = path;
     this->workersNumber = workers;
-    fullSemaphore = std::make_shared<Semaphore>(full);
-    emptySemaphore = std::make_shared<Semaphore>(empty);
+    fullSemaphore = std::move(full);
+    emptySemaphore = std::move(empty);
 }
 
 void Map::listFilesFromPath() {
@@ -27,7 +27,7 @@ void Map::listFilesFromPath() {
     }
 }
 
-void Map::startParallelWorkers(Shuffle & shuffler)
+void Map::startParallelWorkers()
 {
     long numberOfFiles = files.size();
     long filesPerWorker = numberOfFiles / workersNumber;
@@ -35,24 +35,28 @@ void Map::startParallelWorkers(Shuffle & shuffler)
 
     long startRange = 0;
     long endRange = filesPerWorker-1;
-    void (Map::*func)(long, long, Shuffle &);
+    void (Map::*func)(long, long);
     func = &Map::readWorker;
     for(int i=1; i< workersNumber; i++)
     {
-        std::thread th(func, startRange, endRange, shuffler);
+
+        std::thread th(func, this, startRange, endRange);
         workers.push_back(std::move(th));
         startRange += filesPerWorker;
         endRange += filesPerWorker;
     }
 
     endRange += lastWorkerSurplus;
-    std::thread th(func, startRange, endRange, shuffler);
+    std::thread th(func, this, startRange, endRange);
     workers.push_back(std::move(th));
 
 }
 
+void Map::setShuffler(std::shared_ptr<Shuffle> ptr) {
+    shufflerPtr = std::move(ptr);
+}
 
-void Map::readWorker(long startRange, long endRange, Shuffle & shuffler)
+void Map::readWorker(long startRange, long endRange)
 {
     std::pair<std::string, int> * pointer;
     std::ifstream file;
@@ -84,9 +88,10 @@ void Map::readWorker(long startRange, long endRange, Shuffle & shuffler)
                     pointer->first = word;
                     emptySemaphore->wait();
                     //criticalRegion.lock();
-                    shuffler.addToBuffer(pointer);
+                    shufflerPtr->addToBuffer(pointer);
+                    //std::cout << pointer->first << std::endl;
                     //criticalRegion.unlock();
-                    emptySemaphore->notify();
+                    fullSemaphore->notify();
 
                 }
 
@@ -96,9 +101,11 @@ void Map::readWorker(long startRange, long endRange, Shuffle & shuffler)
     }
 }
 
-void Map::waitForWorkers() {
+void Map::waitForWorkers(bool & finished) {
     for(short i=0; i<workersNumber; i++)
     {
         workers[i].join();
     }
+
+    finished = true;
 }

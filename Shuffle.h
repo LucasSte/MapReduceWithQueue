@@ -13,16 +13,17 @@
 class Shuffle
 {
 public:
-    explicit Shuffle(int max, short workersNum, const Semaphore & full, const Semaphore & empty);
+    explicit Shuffle(int max, short workersNum, std::shared_ptr<Semaphore> full, std::shared_ptr<Semaphore> empty);
     void addToBuffer(std::pair<std::string, int> * item);
     std::pair<std::string, int>* removeFromBuffer();
-    void startWorkers(int totalItems);
+    void startWorkers(int totalAttempts);
+    void waitForWorkers();
 private:
     std::queue<std::pair<std::string, int>*> buffer;
     int size;
     int maxsize;
     short workersNum;
-    void shuffleWorker(int expectedItems);
+    void shuffleWorker(int trials);
     std::shared_ptr<Semaphore> fullSemaphore;
     std::shared_ptr<Semaphore> emptySemaphore;
     std::vector<std::thread> workers;

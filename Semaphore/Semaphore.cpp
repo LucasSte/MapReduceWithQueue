@@ -2,6 +2,7 @@
 // Created by lucas on 6/6/20.
 //
 
+#include <iostream>
 #include "Semaphore.h"
 
 Semaphore::Semaphore(unsigned long initial) {
