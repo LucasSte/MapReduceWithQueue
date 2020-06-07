@@ -10,15 +10,16 @@ int main() {
 
 
     bool finished = false;
-    std::shared_ptr<Shuffle> shuffle( new Shuffle(2, 2, &full, &empty, &finished, &finishedSem));
+    std::shared_ptr<Shuffle> shuffle( new Shuffle(1, 3, &full, &empty, &finished, &finishedSem));
+    //The number of files should not be greater than the number of workers
     Map map("../Files", 2, &full, &empty);
 
     map.setShuffler(shuffle);
     map.listFilesFromPath();
     map.startParallelWorkers();
-    shuffle->startWorkers(50);
+    shuffle->startWorkers();
 
-    map.waitForWorkers(finished, &finishedSem);
+    map.waitForWorkers(3);
     std::cout << "Passei" << std::endl;
     shuffle->waitForWorkers();
 

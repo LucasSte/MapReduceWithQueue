@@ -14,15 +14,15 @@ Shuffle::Shuffle(int max, short workersNum, Semaphore * full, Semaphore * empty,
 }
 
 void Shuffle::addToBuffer(std::pair<std::string, int> *item) {
+
     criticalRegion.lock();
-    if(size < maxsize)
+    if(size <= maxsize)
     {
         buffer.push(item);
         size++;
-
-       // std::cout << item->first << std::endl;
     }
     criticalRegion.unlock();
+
 }
 
 std::pair<std::string, int> * Shuffle::removeFromBuffer() {
@@ -43,74 +43,45 @@ std::pair<std::string, int> * Shuffle::removeFromBuffer() {
 }
 
 
-void Shuffle::startWorkers(int totalAttempts) {
-    int itemsPerWorker = totalAttempts/workersNum;
-    int surplus = totalAttempts % workersNum;
+void Shuffle::startWorkers() {
 
-    void (Shuffle::*func)(int);
+    void (Shuffle::*func)();
     func = &Shuffle::shuffleWorker;
-    for(int i=1; i<workersNum; i++)
+    for(int i=0; i<workersNum; i++)
     {
-        std::thread th(func, this, itemsPerWorker);
+        std::thread th(func, this);
         workers.push_back(std::move(th));
     }
 
-    std::thread th(func, this, itemsPerWorker + surplus);
-    workers.push_back(std::move(th));
-
-
 }
 
-void Shuffle::shuffleWorker(int trials) {
+void Shuffle::shuffleWorker() {
 
     std::pair<std::string, int> * elem;
-   // for(int i=0; i<trials; i++)
-    //{
-       // if(!*finished)
-        //{
-        while(!*finished || size > 0)
+    int num = 1;
+    while(num & 1)
+    {
+        fullSemaphore->wait();
+        elem = removeFromBuffer();
+        emptySemaphore->notify();
+        num = elem->second;
+        if(num & 2)
         {
-            fullSemaphore->wait();
-            elem = removeFromBuffer();
-            std::cout << "Removed ";
-            emptySemaphore->notify();
-            if(elem != nullptr)
-            {
-                std::cout << elem->first << std::endl;
-                delete elem;
-            }
-            else
-            {
-                std::cout << "Nada" << std::endl;
-                fullSemaphore->notify();
-            }
+            delete elem;
+            break;
         }
+        else
+        {
+            std::cout << elem->first << std::endl;
+        }
+    }
 
-//        }
-//        else if(fullSemaphore->tryWait() && size > 0)
-//        {
-//            elem = removeFromBuffer();
-//            std::cout << "Removed" << std::endl;
-//            emptySemaphore->notify();
-//            if(elem != nullptr)
-//            {
-//                std::cout << elem->first << std::endl;
-//                delete elem;
-//            }
-//        }
-
-
-//    }
 }
 
 void Shuffle::waitForWorkers() {
-    //finishedSemaphore->wait();
-    //fullSemaphore->waitForZero();
-    std::cout << size << std::endl;
-    for(short i =0; i<workersNum; i++)
+
+    for(short i=0; i<workersNum; i++)
     {
-        std::cout << "Esperando" << std::endl;
-        fullSemaphore->notify();
         workers[i].join();
     }
 }

@@ -21,7 +21,6 @@ private:
     void readWorker(long startRange, long endRange);
     Semaphore * fullSemaphore;
     Semaphore * emptySemaphore;
-    //std::mutex criticalRegion;
     std::vector<std::thread> workers;
     std::shared_ptr<Shuffle> shufflerPtr;
 
@@ -29,7 +28,7 @@ public:
     Map(std::string path, short workers, Semaphore * full, Semaphore *empty);
     void listFilesFromPath();
     void startParallelWorkers();
-    void waitForWorkers(bool & finished, Semaphore * finishedSemaphore);
+    void waitForWorkers(short shuffleWorkers);
     void setShuffler(std::shared_ptr<Shuffle> ptr);
 };
 

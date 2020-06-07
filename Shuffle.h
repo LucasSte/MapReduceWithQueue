@@ -16,7 +16,7 @@ public:
     explicit Shuffle(int max, short workersNum, Semaphore * full, Semaphore * empty, bool * finished, Semaphore * finishedSem);
     void addToBuffer(std::pair<std::string, int> * item);
     std::pair<std::string, int>* removeFromBuffer();
-    void startWorkers(int totalAttempts);
+    void startWorkers();
     void waitForWorkers();
 private:
     std::queue<std::pair<std::string, int>*> buffer;
@@ -24,7 +24,7 @@ private:
     int maxsize;
     short workersNum;
     const bool * finished;
-    void shuffleWorker(int trials);
+    void shuffleWorker();
     Semaphore * fullSemaphore;
     Semaphore * emptySemaphore;
     Semaphore * finishedSemaphore;

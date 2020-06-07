@@ -33,6 +33,13 @@ void Map::startParallelWorkers()
     long filesPerWorker = numberOfFiles / workersNumber;
     long lastWorkerSurplus = filesPerWorker % workersNumber;
 
+    if(workersNumber > numberOfFiles)
+    {
+        workersNumber = (short)numberOfFiles;
+        filesPerWorker = 1;
+        lastWorkerSurplus = 0;
+    }
+
     long startRange = 0;
     long endRange = filesPerWorker-1;
     void (Map::*func)(long, long);
@@ -87,10 +94,7 @@ void Map::readWorker(long startRange, long endRange)
                     pointer->second = 1;
                     pointer->first = word;
                     emptySemaphore->wait();
-                    //criticalRegion.lock();
                     shufflerPtr->addToBuffer(pointer);
-                    //std::cout << pointer->first << std::endl;
-                    //criticalRegion.unlock();
                     fullSemaphore->notify();
 
                 }
@@ -101,12 +105,21 @@ void Map::readWorker(long startRange, long endRange)
     }
 }
 
-void Map::waitForWorkers(bool & finished, Semaphore * finishedSemaphore) {
+void Map::waitForWorkers(short shuffleWorkers){
     for(short i=0; i<workersNumber; i++)
     {
         workers[i].join();
     }
 
-    finishedSemaphore->notify();
-    finished = true;
+    std::pair<std::string, int> *pointer;
+    for(short i=0; i<shuffleWorkers; i++)
+    {
+        pointer = new std::pair<std::string, int>();
+        pointer->first = "";
+        pointer->second = 2;
+        emptySemaphore->wait();
+        shufflerPtr->addToBuffer(pointer);
+        fullSemaphore->notify();
+    }
+
 }
