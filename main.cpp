@@ -50,8 +50,9 @@ int main() {
 
     std::cout << std::endl;
     std::cout << "Time Async = " << std::chrono::duration_cast<std::chrono::nanoseconds>(endAsync - beginAsync).count() << "[ns]" << std::endl;
+//    shuffle->printOutMap();
 
     std::cout << "Time Sync  = " << std::chrono::duration_cast<std::chrono::nanoseconds>(endSync - beginSync).count() << "[ns]" << std::endl;
-
+//    mapSync.printOutMap();
     return 0;
 }

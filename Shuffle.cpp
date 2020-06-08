@@ -102,3 +102,9 @@ void Shuffle::waitForWorkers() {
     }
 }
 
+void Shuffle::printOutMap(){
+    for(auto & it : outMap){
+        std::cout<<it.first<<":\t"<<it.second<<std::endl;
+    }
+}
+

@@ -19,6 +19,7 @@ public:
     std::pair<std::string, int>* removeFromBuffer();
     void startWorkers();
     void waitForWorkers();
+    void printOutMap();
 private:
     std::queue<std::pair<std::string, int>*> buffer;
     std::map<std::string, int> outMap;

@@ -17,5 +17,12 @@ void MapSync::processInput(std::pair<std::string, int> *ptr) {
     //TODO: Aqui o Ocimar deve colocar uma funcao para processar coisas sincronas
     //TODO: Nao eh necessario shuffle, ja que so existe uma thread
     //std::cout << "sync " << ptr->first << std::endl;
+    outMap[ptr->first]++;
     delete ptr;
+}
+
+void MapSync::printOutMap(){
+    for(auto & it : outMap){
+        std::cout<<it.first<<":\t"<<it.second<<std::endl;
+    }
 }
