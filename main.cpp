@@ -23,7 +23,7 @@ int main() {
     Semaphore empty(BUFFER_SIZE);
     Semaphore full(0);
 
-    std::shared_ptr<Shuffle> shuffle( new Shuffle(BUFFER_SIZE, SHUFFLE_WORKERS, full, empty));
+    std::shared_ptr<Shuffle> shuffle( new Shuffle(BUFFER_SIZE, SHUFFLE_WORKERS, full, empty, true));
     //The number of workers should not be greater than the number of files
     Map map("../Files", MAP_WORKERS, full, empty);
 
@@ -51,7 +51,7 @@ int main() {
     std::cout << std::endl;
     std::cout << "Time Async = " << std::chrono::duration_cast<std::chrono::nanoseconds>(endAsync - beginAsync).count() << "[ns]" << std::endl;
 
-    std::cout << "Time Sync = " << std::chrono::duration_cast<std::chrono::nanoseconds>(endSync - beginSync).count() << "[ns]" << std::endl;
+    std::cout << "Time Sync  = " << std::chrono::duration_cast<std::chrono::nanoseconds>(endSync - beginSync).count() << "[ns]" << std::endl;
 
     return 0;
 }

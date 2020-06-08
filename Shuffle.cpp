@@ -5,12 +5,13 @@
 #include <iostream>
 #include "Shuffle.h"
 
-Shuffle::Shuffle(int max, short workersNum, Semaphore & full, Semaphore & empty)
+Shuffle::Shuffle(int max, short workersNum, Semaphore & full, Semaphore & empty, bool reduce)
 : fullSemaphore(full), emptySemaphore(empty)
 {
     maxsize = max;
     size = 0;
     this->workersNum = workersNum;
+    this->reduce = reduce;
 }
 
 void Shuffle::addToBuffer(std::pair<std::string, int> *item) {
@@ -78,9 +79,16 @@ void Shuffle::shuffleWorker() {
         }
         else
         {
-            //Since there are no locks for the prints, they are out of order
-            //std::cout << elem->first << " " << std::this_thread::get_id() << std::endl;
-            //TODO: Aqui o Ocimar deve colocar uma função para tratar as coisas do Ocimar
+            if(reduce)
+            {
+                shuffleReduceMutex.lock();
+                outMap[elem->first]++;
+                shuffleReduceMutex.unlock();
+            }
+            else
+            {
+                // ToDo: Implementar Shuffle, sem Reduce
+            }
         }
     }
 
