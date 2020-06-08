@@ -107,6 +107,7 @@ void Map::processInput(std::pair<std::string, int> *ptr) {
     emptySemaphore.wait();
     shufflerPtr->addToBuffer(ptr);
     fullSemaphore.notify();
+
 }
 
 void Map::waitForWorkers(short shuffleWorkers){

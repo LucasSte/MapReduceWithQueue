@@ -17,15 +17,15 @@ class Map
 private:
     std::string pathName;
     short workersNumber;
-    Semaphore & fullSemaphore;
-    Semaphore & emptySemaphore;
     std::vector<std::thread> workers;
-    std::shared_ptr<Shuffle> shufflerPtr;
 
 protected:
     void readWorker(long startRange, long endRange);
     virtual void processInput(std::pair<std::string, int> * ptr);
     std::vector<std::string> files;
+    std::shared_ptr<Shuffle> shufflerPtr;
+    Semaphore & fullSemaphore;
+    Semaphore & emptySemaphore;
 
 public:
     Map(std::string path, short workers, Semaphore & full, Semaphore & empty);
