@@ -7,24 +7,24 @@
 
 int main(int argc, char const *argv[])
 {
-    char words[][18] = {"oi",
-                    "ocimar",
-                    "ste",
-                    "bem",
-                    "legal",
-                    "processador",
-                    "trhead",
-                    "filosofos",
-                    "cpu",
+    char words[][18] = {"bem",
                     "computador",
-                    "sistema",
-                    "operacional",
-                    "so",
-                    "usuario",
-                    "nucleo",
+                    "cpu",
+                    "escalonador",
+                    "filosofos",
                     "kernel",
+                    "legal",
+                    "nucleo",
+                    "ocimar",
+                    "oi",
+                    "operacional",
                     "pipeline",
-                    "escalonador"};
+                    "processador",
+                    "sistema",
+                    "so",
+                    "ste",
+                    "trhead",
+                    "usuario"};
 
     int randon_num;
     int num_words;

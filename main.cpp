@@ -59,12 +59,12 @@ int main() {
 
 
     std::cout << std::endl;
-    std::cout << "Time Async = " << std::chrono::duration_cast<std::chrono::milliseconds>(endAsync - beginAsync).count() << "[ms]" << std::endl;
-//    shuffle->printOutMap();
+    std::cout << "\n\nTime Async = " << std::chrono::duration_cast<std::chrono::milliseconds>(endAsync - beginAsync).count() << "[ms]" << std::endl;
+    shuffle->printOutMap();
 
-    std::cout << "Time Sync  = " << std::chrono::duration_cast<std::chrono::milliseconds>(endSync - beginSync).count() << "[ms]" << std::endl;
-//    mapSync.printOutMap();
+    std::cout << "\n\nTime Sync  = " << std::chrono::duration_cast<std::chrono::milliseconds>(endSync - beginSync).count() << "[ms]" << std::endl;
+    mapSync.printOutMap();
 
-    std::cout << "Time NoS  = " << std::chrono::duration_cast<std::chrono::milliseconds>(endNoS - beginNoS).count() << "[ms]" << std::endl;
+    std::cout << "\n\nTime NoS  = " << std::chrono::duration_cast<std::chrono::milliseconds>(endNoS - beginNoS).count() << "[ms]" << std::endl;
     return 0;
 }

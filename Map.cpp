@@ -85,7 +85,7 @@ void Map::readWorker(long startRange, long endRange)
                 size = word.size();
                 if(size > 0)
                 {
-                    if(word[size-1] >= 'z' || word[size-1] <= 'a')
+                    if(word[size-1] > 'z' || word[size-1] < 'a')
                     {
                         word = word.substr(0, size-1);
                     }
