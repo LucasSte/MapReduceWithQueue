@@ -5,7 +5,7 @@
 #include "MapSync.h"
 
 #define BUFFER_SIZE 10000
-#define SHUFLLE_WORKERS 2
+#define SHUFFLE_WORKERS 2
 #define MAP_WORKERS 2
 
 
@@ -23,7 +23,7 @@ int main() {
     Semaphore empty(BUFFER_SIZE);
     Semaphore full(0);
 
-    std::shared_ptr<Shuffle> shuffle( new Shuffle(BUFFER_SIZE, SHUFLLE_WORKERS, full, empty));
+    std::shared_ptr<Shuffle> shuffle( new Shuffle(BUFFER_SIZE, SHUFFLE_WORKERS, full, empty));
     //The number of workers should not be greater than the number of files
     Map map("../Files", MAP_WORKERS, full, empty);
 
@@ -35,7 +35,7 @@ int main() {
 
     shuffle->startWorkers();
 
-    map.waitForWorkers(SHUFLLE_WORKERS);
+    map.waitForWorkers(SHUFFLE_WORKERS);
     shuffle->waitForWorkers();
     std::chrono::steady_clock::time_point endAsync = std::chrono::steady_clock::now();
 
