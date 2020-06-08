@@ -12,4 +12,5 @@ void MapNoShuffle::processInput(std::pair<std::string, int> *ptr) {
     mapMutex.lock();
     outMap[ptr->first]++;
     mapMutex.unlock();
+    delete ptr;
 }
