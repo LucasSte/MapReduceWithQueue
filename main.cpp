@@ -7,7 +7,7 @@
 
 #define BUFFER_SIZE 10000000
 #define SHUFFLE_WORKERS 1
-#define MAP_WORKERS 5
+#define MAP_WORKERS 10
 
 
 /*
@@ -38,7 +38,7 @@ int main() {
     map.waitForWorkers(SHUFFLE_WORKERS);
     shuffle->waitForWorkers();
     std::chrono::steady_clock::time_point endAsync = std::chrono::steady_clock::now();
-    
+
 
     MapSync mapSync("../Files", MAP_WORKERS, full, empty);
     mapSync.listFilesFromPath();
