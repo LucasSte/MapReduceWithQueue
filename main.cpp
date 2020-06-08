@@ -20,7 +20,7 @@
  */
 
 int main() {
-    Semaphore empty(2);
+    Semaphore empty(BUFFER_SIZE);
     Semaphore full(0);
 
     std::shared_ptr<Shuffle> shuffle( new Shuffle(BUFFER_SIZE, SHUFLLE_WORKERS, full, empty));
