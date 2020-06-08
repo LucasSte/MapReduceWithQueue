@@ -26,6 +26,7 @@ protected:
     std::shared_ptr<Shuffle> shufflerPtr;
     Semaphore & fullSemaphore;
     Semaphore & emptySemaphore;
+    std::map<std::string, int> outMap;
 
 public:
     Map(std::string path, short workers, Semaphore & full, Semaphore & empty);

@@ -3,10 +3,11 @@
 #include "Semaphore/Semaphore.h"
 #include "Shuffle.h"
 #include "MapSync.h"
+#include "MapNoShuffle.h"
 
 #define BUFFER_SIZE 10000000
 #define SHUFFLE_WORKERS 1
-#define MAP_WORKERS 10
+#define MAP_WORKERS 5
 
 
 /*
@@ -37,8 +38,7 @@ int main() {
     map.waitForWorkers(SHUFFLE_WORKERS);
     shuffle->waitForWorkers();
     std::chrono::steady_clock::time_point endAsync = std::chrono::steady_clock::now();
-
-    std::cout << "Synchronous section" << std::endl;
+    
 
     MapSync mapSync("../Files", MAP_WORKERS, full, empty);
     mapSync.listFilesFromPath();
@@ -48,11 +48,23 @@ int main() {
     mapSync.processSync();
     std::chrono::steady_clock::time_point endSync = std::chrono::steady_clock::now();
 
+    MapNoShuffle mapNoShuffle("../Files", MAP_WORKERS, full, empty);
+    mapNoShuffle.listFilesFromPath();
+    mapNoShuffle.setShuffler(shuffle);
+
+    std::chrono::steady_clock::time_point beginNoS = std::chrono::steady_clock::now();
+    mapNoShuffle.startParallelWorkers();
+    mapNoShuffle.waitForWorkers(0);
+    std::chrono::steady_clock::time_point endNoS = std::chrono::steady_clock::now();
+
+
     std::cout << std::endl;
     std::cout << "Time Async = " << std::chrono::duration_cast<std::chrono::milliseconds>(endAsync - beginAsync).count() << "[ms]" << std::endl;
 //    shuffle->printOutMap();
 
     std::cout << "Time Sync  = " << std::chrono::duration_cast<std::chrono::milliseconds>(endSync - beginSync).count() << "[ms]" << std::endl;
 //    mapSync.printOutMap();
+
+    std::cout << "Time NoS  = " << std::chrono::duration_cast<std::chrono::milliseconds>(endNoS - beginNoS).count() << "[ms]" << std::endl;
     return 0;
 }
