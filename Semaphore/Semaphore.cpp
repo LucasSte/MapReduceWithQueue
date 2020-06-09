@@ -10,13 +10,13 @@ Semaphore::Semaphore(unsigned long initial) {
 }
 
 void Semaphore::notify() {
-    std::lock_guard<decltype(mutex)> lock(mutex);
+    std::lock_guard<std::mutex> lock(mutex);
     ++count;
     condition.notify_one();
 }
 
 void Semaphore::wait() {
-    std::unique_lock<decltype(mutex)> lock(mutex);
+    std::unique_lock<std::mutex> lock(mutex);
     while(!count)
         condition.wait(lock);
     --count;
@@ -24,7 +24,7 @@ void Semaphore::wait() {
 
 
 bool Semaphore::tryWait() {
-    std::lock_guard<decltype(mutex)> lock(mutex);
+    std::lock_guard<std::mutex> lock(mutex);
     if(count)
     {
         --count;
