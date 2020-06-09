@@ -31,7 +31,8 @@ void MapSync::processInput(std::pair<std::string, int> *ptr) {
 }
 
 void MapSync::printOutMap(){
+    printf("\n\nQuantidade de palavras no arquivo:\n");
     for(auto & it : outMap){
-        std::cout<<it.first<<":\t"<<it.second<<std::endl;
+        printf("%11s: %d\n", it.first.c_str(), it.second);
     }
 }
