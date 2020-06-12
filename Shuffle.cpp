@@ -103,7 +103,7 @@ void Shuffle::waitForWorkers() {
 }
 
 void Shuffle::printOutMap(){
-    printf("\n\nQuantidade de palavras no arquivo:\n");
+    printf("\n\nQuantidade de palavras nos arquivos:\n");
     for(auto & it : outMap){
         printf("%11s: %d\n", it.first.c_str(), it.second);
     }

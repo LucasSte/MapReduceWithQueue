@@ -15,6 +15,7 @@ private:
 
 public:
     MapNoShuffle(std::string path, short workers, Semaphore & full, Semaphore & empty);
+    void printOutMap();
 };
 
 #endif //MAPREDUCEWITHQUEUE_MAPNOSHUFFLE_H

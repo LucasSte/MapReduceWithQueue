@@ -3,11 +3,11 @@
 #include <stdio.h>
 
 #define MAX_WORDS 2048
-#define NUM_FILES 1
+#define NUM_FILES 1024
 
 int main(int argc, char const *argv[])
 {
-    char words[][18] = {"bem",
+    const char* words[18] = {"bem",
                     "computador",
                     "cpu",
                     "escalonador",
@@ -28,10 +28,10 @@ int main(int argc, char const *argv[])
 
     int randon_num;
     int num_words;
-    char* file_name;
+    char file_name[50];
 
     FILE* out_file;
-    FILE* log_file = fopen ("./test_num_words/log.txt", "w");;
+    FILE* log_file = fopen ("log.txt", "w");;
 
     srand( (unsigned)time(NULL) );
 
@@ -39,8 +39,9 @@ int main(int argc, char const *argv[])
     int words_counters[18] = {};
     for (int file_index = 0; file_index < NUM_FILES; ++file_index)
     {
-        sprintf(file_name, "./test_num_words/generated_%d.txt", file_index+1);
-        out_file = fopen (file_name, "w");
+        sprintf(file_name, "../Files/generated_%d.txt", file_index+1);
+        out_file = fopen(file_name, "w");
+        
         num_words = 0;
         while (num_words < MAX_WORDS)
         {
@@ -58,14 +59,13 @@ int main(int argc, char const *argv[])
             num_words++;
         }
 
-        fprintf(log_file, "Quantidade de palavras no arquivo:\n");
-        for (int i = 0; i < 18; ++i)
-        {
-            fprintf(log_file, "%11s: %d\n", words[i], words_counters[i]);
-        }
         fclose(out_file);
+    }
 
-        
+    fprintf(log_file, "Quantidade de palavras nos arquivos:\n");
+    for (int i = 0; i < 18; ++i)
+    {
+        fprintf(log_file, "%11s: %d\n", words[i], words_counters[i]);
     }
 
     fclose(log_file);

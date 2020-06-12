@@ -14,3 +14,10 @@ void MapNoShuffle::processInput(std::pair<std::string, int> *ptr) {
     mapMutex.unlock();
     delete ptr;
 }
+
+void MapNoShuffle::printOutMap(){
+    printf("\n\nQuantidade de palavras nos arquivos:\n");
+    for(auto & it : outMap){
+        printf("%11s: %d\n", it.first.c_str(), it.second);
+    }
+}

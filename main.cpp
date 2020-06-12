@@ -66,5 +66,7 @@ int main() {
     mapSync.printOutMap();
 
     std::cout << "\n\nTime NoS  = " << std::chrono::duration_cast<std::chrono::milliseconds>(endNoS - beginNoS).count() << "[ms]" << std::endl;
+    mapNoShuffle.printOutMap();
+
     return 0;
 }
