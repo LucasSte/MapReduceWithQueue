@@ -31,7 +31,7 @@ void Map::startParallelWorkers()
 {
     long numberOfFiles = files.size();
     long filesPerWorker = numberOfFiles / workersNumber;
-    long lastWorkerSurplus = filesPerWorker % workersNumber;
+    long lastWorkerSurplus = numberOfFiles % workersNumber;
 
     if(workersNumber > numberOfFiles)
     {
