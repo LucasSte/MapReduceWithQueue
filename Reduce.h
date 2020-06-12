@@ -8,13 +8,13 @@
 #include <thread>
 #include "Semaphore/Semaphore.h"
 
-#ifndef MAPREDUCEWITHQUEUE_SHUFFLE_H
-#define MAPREDUCEWITHQUEUE_SHUFFLE_H
+#ifndef MAPREDUCEWITHQUEUE_REDUCE_H
+#define MAPREDUCEWITHQUEUE_REDUCE_H
 
-class Shuffle
+class Reduce
 {
 public:
-    explicit Shuffle(int max, short workersNum, Semaphore & full, Semaphore & empty, bool reduce=false);
+    explicit Reduce(int max, short workersNum, Semaphore & full, Semaphore & empty, bool reduce=false);
     void addToBuffer(std::pair<std::string, int> * item);
     std::pair<std::string, int>* removeFromBuffer();
     void startWorkers();
@@ -27,14 +27,14 @@ private:
     int maxsize;
     short workersNum;
     bool reduce;
-    void shuffleWorker();
+    void reduceWorker();
     Semaphore & fullSemaphore;
     Semaphore & emptySemaphore;
     std::vector<std::thread> workers;
     std::mutex criticalRegion;
-    std::mutex shuffleReduceMutex;
+    std::mutex reduceMutex;
     constexpr inline void addToQueue(std::pair<std::string, int> * item);
     constexpr inline std::pair<std::string, int> * removeFromQueue();
 };
 
-#endif //MAPREDUCEWITHQUEUE_SHUFFLE_H
+#endif //MAPREDUCEWITHQUEUE_REDUCE_H

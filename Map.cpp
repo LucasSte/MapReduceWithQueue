@@ -59,8 +59,8 @@ void Map::startParallelWorkers()
 
 }
 
-void Map::setShuffler(std::shared_ptr<Shuffle> ptr) {
-    shufflerPtr = std::move(ptr);
+void Map::setReducer(std::shared_ptr<Reduce> ptr) {
+    reducePtr = std::move(ptr);
 }
 
 void Map::readWorker(long startRange, long endRange)
@@ -105,25 +105,25 @@ void Map::readWorker(long startRange, long endRange)
 
 void Map::processInput(std::pair<std::string, int> *ptr) {
     emptySemaphore.wait();
-    shufflerPtr->addToBuffer(ptr);
+    reducePtr->addToBuffer(ptr);
     fullSemaphore.notify();
 
 }
 
-void Map::waitForWorkers(short shuffleWorkers){
+void Map::waitForWorkers(short reduceWorkers){
     for(short i=0; i<workersNumber; i++)
     {
         workers[i].join();
     }
 
     std::pair<std::string, int> *pointer;
-    for(short i=0; i<shuffleWorkers; i++)
+    for(short i=0; i < reduceWorkers; i++)
     {
         pointer = new std::pair<std::string, int>();
         pointer->first = "";
         pointer->second = 2;
         emptySemaphore.wait();
-        shufflerPtr->addToBuffer(pointer);
+        reducePtr->addToBuffer(pointer);
         fullSemaphore.notify();
     }
 

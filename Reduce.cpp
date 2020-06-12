@@ -3,9 +3,9 @@
 //
 
 #include <iostream>
-#include "Shuffle.h"
+#include "Reduce.h"
 
-Shuffle::Shuffle(int max, short workersNum, Semaphore & full, Semaphore & empty, bool reduce)
+Reduce::Reduce(int max, short workersNum, Semaphore & full, Semaphore & empty, bool reduce)
 : fullSemaphore(full), emptySemaphore(empty)
 {
     maxsize = max;
@@ -14,7 +14,7 @@ Shuffle::Shuffle(int max, short workersNum, Semaphore & full, Semaphore & empty,
     this->reduce = reduce;
 }
 
-void Shuffle::addToBuffer(std::pair<std::string, int> *item) {
+void Reduce::addToBuffer(std::pair<std::string, int> *item) {
 
     criticalRegion.lock();
     addToQueue(item);
@@ -22,7 +22,7 @@ void Shuffle::addToBuffer(std::pair<std::string, int> *item) {
 
 }
 
-constexpr inline void Shuffle::addToQueue(std::pair<std::string, int> *item) {
+constexpr inline void Reduce::addToQueue(std::pair<std::string, int> *item) {
     if(size <= maxsize)
     {
         buffer.push(item);
@@ -30,12 +30,12 @@ constexpr inline void Shuffle::addToQueue(std::pair<std::string, int> *item) {
     }
 }
 
-std::pair<std::string, int> * Shuffle::removeFromBuffer() {
+std::pair<std::string, int> * Reduce::removeFromBuffer() {
     std::lock_guard<std::mutex> lock(criticalRegion);
     return removeFromQueue();
 }
 
-constexpr inline std::pair<std::string, int> * Shuffle::removeFromQueue() {
+constexpr inline std::pair<std::string, int> * Reduce::removeFromQueue() {
     if(size == 0)
     {
         return nullptr;
@@ -50,10 +50,10 @@ constexpr inline std::pair<std::string, int> * Shuffle::removeFromQueue() {
 }
 
 
-void Shuffle::startWorkers() {
+void Reduce::startWorkers() {
 
-    void (Shuffle::*func)();
-    func = &Shuffle::shuffleWorker;
+    void (Reduce::*func)();
+    func = &Reduce::reduceWorker;
     for(int i=0; i<workersNum; i++)
     {
         std::thread th(func, this);
@@ -62,7 +62,7 @@ void Shuffle::startWorkers() {
 
 }
 
-void Shuffle::shuffleWorker() {
+void Reduce::reduceWorker() {
 
     std::pair<std::string, int> * elem;
     int num = 1;
@@ -79,22 +79,15 @@ void Shuffle::shuffleWorker() {
         }
         else
         {
-            if(reduce)
-            {
-                shuffleReduceMutex.lock();
-                outMap[elem->first]++;
-                shuffleReduceMutex.unlock();
-            }
-            else
-            {
-                // ToDo: Implementar Shuffle, sem Reduce
-            }
+            reduceMutex.lock();
+            outMap[elem->first]++;
+            reduceMutex.unlock();
         }
     }
 
 }
 
-void Shuffle::waitForWorkers() {
+void Reduce::waitForWorkers() {
 
     for(short i=0; i<workersNum; i++)
     {
@@ -102,7 +95,7 @@ void Shuffle::waitForWorkers() {
     }
 }
 
-void Shuffle::printOutMap(){
+void Reduce::printOutMap(){
     printf("\n\nQuantidade de palavras nos arquivos:\n");
     for(auto & it : outMap){
         printf("%11s: %d\n", it.first.c_str(), it.second);

@@ -14,18 +14,6 @@ void MapSync::processSync() {
 }
 
 void MapSync::processInput(std::pair<std::string, int> *ptr) {
-    //TODO: Aqui o Ocimar deve colocar uma funcao para processar coisas sincronas
-    //TODO: Nao eh necessario shuffle, ja que so existe uma thread
-    //std::cout << "sync " << ptr->first << std::endl;
-    std::pair<std::string, int> * elem;
-//    emptySemaphore.wait();
-//    shufflerPtr->addToBuffer(ptr);
-//    fullSemaphore.notify();
-//
-//    fullSemaphore.wait();
-//    elem = shufflerPtr->removeFromBuffer();
-//    emptySemaphore.notify();
-
     outMap[ptr->first]++;
     delete ptr;
 }
